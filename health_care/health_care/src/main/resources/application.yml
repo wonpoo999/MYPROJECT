@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:hcdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate.format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:5173
+      - http://localhost:19006
+      - http://127.0.0.1:19006
+    # 참고: exp://* 는 브라우저 CORS origin 으로 유효하지 않아 제외
+  jwt:
+    secret: ${JWT_SECRET:change-this-to-a-long-random-secret}
+    access-exp-min: 180
+  ai:
+    mode: mock              # mock | ollama
+    ollama:
+      base-url: http://localhost:11434
+      model: llama3
+
+external:
+  clarifai:
+    api-key: ${CLARIFAI_API_KEY:}
+    model-id: food-item-recognition
+  usda:
+    api-key: ${USDA_API_KEY:}
+  # edamam도 쓸 거면 아래 두 줄로 대체 가능
+  # edamam:
+  #   app-id: ${EDAMAM_APP_ID:}
+  #   app-key: ${EDAMAM_APP_KEY:}
