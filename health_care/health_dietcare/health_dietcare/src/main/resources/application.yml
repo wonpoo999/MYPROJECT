@@ -1,13 +1,12 @@
-# src/main/resources/application.yml
 server:
   port: 8081
 
 spring:
   datasource:
-    url: jdbc:h2:mem:hcdb;MODE=MySQL;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:oracle:thin:@//localhost:1521/xe
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: c##idev
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: update
@@ -32,7 +31,7 @@ app:
       - "http://localhost:*"
       - "http://127.0.0.1:*"
   jwt:
-    secret: ${JWT_SECRET:dev-local-super-long-secret-please-change-0123456789-abcdef-XYZ}
+    secret: ${JWT_SECRET:change-me}
     access-exp-min: 180
   ai:
     mode: mock

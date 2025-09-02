@@ -1,7 +1,6 @@
 package com.example.health_dietcare.service;
 
 import com.example.health_dietcare.dto.AuthDtos;
-import com.example.health_dietcare.entity.Gender;
 import com.example.health_dietcare.entity.User;
 import com.example.health_dietcare.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
@@ -36,35 +35,35 @@ public class AuthService {
     @Value("${app.jwt.access-exp-min:180}")
     private long accessExpMin;
 
-    /** 회원가입 – 컨트롤러 시그니처에 맞춰 DTO로 받음 */
+    /** 회원가입 */
     public void register(AuthDtos.RegisterReq r) {
-        // 기본 검증
         if (r.getUsername() == null || r.getUsername().isBlank())
             throw new IllegalArgumentException("username required");
         if (r.getPassword() == null || r.getPassword().isBlank())
             throw new IllegalArgumentException("password required");
         if (r.getPasswordCheck() != null && !r.getPassword().equals(r.getPasswordCheck()))
             throw new IllegalArgumentException("password mismatch");
-        if (users.existsByUsername(r.getUsername()))
+        if (r.getEmail() == null || r.getEmail().isBlank())
+            throw new IllegalArgumentException("email required");
+        if (r.getEmailCheck() != null && !r.getEmail().equals(r.getEmailCheck()))
+            throw new IllegalArgumentException("email mismatch");
+
+        if (users.existsUsernameIgnoreCase(r.getUsername()) || users.existsByUsername(r.getUsername()))
             throw new IllegalStateException("username already exists");
+        if (users.existsEmailIgnoreCase(r.getEmail()) || users.existsByEmail(r.getEmail()))
+            throw new IllegalStateException("email already exists");
 
-        // User 인스턴스 생성 (Builder 있으면 사용, 없으면 기본생성자+setter)
         User u = buildUser(r);
-
-        // 저장
         users.save(u);
     }
 
-    /** 로그인 – DTO로 받고 토큰과 uid 반환 */
+    /** 로그인 – 토큰과 uid 반환 */
     public AuthDtos.LoginRes login(AuthDtos.LoginReq r) {
-        // 자격 검증(비밀번호 검증 포함)
         authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(r.getUsername(), r.getPassword())
         );
-
         User u = users.findByUsername(r.getUsername())
                 .orElseThrow(() -> new IllegalStateException("user not found"));
-
         String token = issueJwt(u.getUsername(), u.getId());
         return new AuthDtos.LoginRes(token, u.getId());
     }
@@ -73,37 +72,47 @@ public class AuthService {
 
     /** DTO → User 빌드(Builder가 있으면 활용, 아니면 setter로 세팅) */
     private User buildUser(AuthDtos.RegisterReq r) {
-        // 1) Builder 탐색
         try {
+            // 1) Builder 우선
             Method builderMethod = User.class.getMethod("builder");
-            Object builder = builderMethod.invoke(null);
+            Object b = builderMethod.invoke(null);
 
-            // username / password(encoding)
-            callIfExists(builder, "username", String.class, r.getUsername());
-            callIfExists(builder, "password", String.class, encoder.encode(r.getPassword()));
+            callIfExists(b, "username", String.class, r.getUsername());
+            callIfExists(b, "password", String.class, encoder.encode(r.getPassword()));
+            callIfExists(b, "email",    String.class, r.getEmail());
+            callIfExists(b, "name",     String.class, r.getName());
+            callIfExists(b, "gender",   User.Gender.class, r.getGender());
+            callIfExists(b, "heightCm", Integer.class, r.getHeightCm());
+            callIfExists(b, "weightKg", Double.class,  r.getWeightKg());
+            callIfExists(b, "publicProfile", Boolean.class, r.getPublicProfile());
 
-            // 선택 필드(있으면 세팅, 없으면 무시)
-            callIfExists(builder, "email", String.class, r.getEmail());
-            callIfExists(builder, "name", String.class, r.getName());
-            callIfExists(builder, "gender", Gender.class, r.getGender());
-            callIfExists(builder, "heightCm", Integer.class, r.getHeightCm());
-            callIfExists(builder, "weightKg", Double.class, r.getWeightKg());
-            callIfExists(builder, "publicProfile", Boolean.class, r.getPublicProfile());
+            callIfExists(b, "bornTown",   String.class, r.getBornTown());
+            callIfExists(b, "livedTown",  String.class, r.getLivedTown());
+            callIfExists(b, "motherName", String.class, r.getMotherName());
+            callIfExists(b, "dogName",    String.class, r.getDogName());
+            callIfExists(b, "elementary", String.class, r.getElementary());
 
-            Object built = call(builder, "build");
+            Object built = call(b, "build");
             return (User) built;
+
         } catch (NoSuchMethodException ignore) {
             // 2) 기본 생성자 + setter
             try {
                 User u = User.class.getDeclaredConstructor().newInstance();
                 callIfExists(u, "setUsername", String.class, r.getUsername());
                 callIfExists(u, "setPassword", String.class, encoder.encode(r.getPassword()));
-                callIfExists(u, "setEmail", String.class, r.getEmail());
-                callIfExists(u, "setName", String.class, r.getName());
-                callIfExists(u, "setGender", Gender.class, r.getGender());
+                callIfExists(u, "setEmail",    String.class, r.getEmail());
+                callIfExists(u, "setName",     String.class, r.getName());
+                callIfExists(u, "setGender",   User.Gender.class, r.getGender());
                 callIfExists(u, "setHeightCm", Integer.class, r.getHeightCm());
-                callIfExists(u, "setWeightKg", Double.class, r.getWeightKg());
+                callIfExists(u, "setWeightKg", Double.class,  r.getWeightKg());
                 callIfExists(u, "setPublicProfile", Boolean.class, r.getPublicProfile());
+
+                callIfExists(u, "setBornTown",   String.class, r.getBornTown());
+                callIfExists(u, "setLivedTown",  String.class, r.getLivedTown());
+                callIfExists(u, "setMotherName", String.class, r.getMotherName());
+                callIfExists(u, "setDogName",    String.class, r.getDogName());
+                callIfExists(u, "setElementary", String.class, r.getElementary());
                 return u;
             } catch (Exception e) {
                 throw new RuntimeException("Cannot construct User", e);
@@ -140,7 +149,6 @@ public class AuthService {
             throw new RuntimeException(e);
         }
     }
-
     private static Object call(Object target, String method) throws Exception {
         Method m = target.getClass().getMethod(method);
         return m.invoke(target);

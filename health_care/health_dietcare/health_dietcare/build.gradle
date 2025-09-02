@@ -8,23 +8,28 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    toolchain { languageVersion = JavaLanguageVersion.of(17) } // JDK 17+
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
 repositories { mavenCentral() }
 
 dependencies {
-    // 서블릿 스택 (Security 필터/서블릿 의존)
+    // Servlet stack
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // WebClient 사용 (Reactor/Netty 포함)
+    // WebClient
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'io.projectreactor.netty:reactor-netty-http'
 
-    // Security / JPA / H2
+    // Security / JPA
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly   'com.h2database:h2'
+
+    // ✅ Oracle JDBC (필수)
+    runtimeOnly 'com.oracle.database.jdbc:ojdbc11:23.5.0.24.07'
+
+    // H2(로컬 테스트용 필요 시 유지)
+    runtimeOnly 'com.h2database:h2'
 
     // Validation & Actuator
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -35,10 +40,10 @@ dependencies {
     runtimeOnly  'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly  'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // Swagger(OpenAPI) – MVC UI
+    // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
-    // Lombok & @ConfigurationProperties 메타데이터
+    // Lombok & @ConfigurationProperties
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -48,8 +53,6 @@ dependencies {
 }
 
 tasks.named('test') { useJUnitPlatform() }
-
-// ✅ 스프링이 파라미터 이름을 반사로 읽을 수 있게 함
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs += ['-parameters']
 }
