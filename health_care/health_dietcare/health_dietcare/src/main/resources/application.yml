@@ -1,0 +1,48 @@
+# src/main/resources/application.yml
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:hcdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      "[hibernate.format_sql]": true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+
+app:
+  cors:
+    allowed-origins:
+      - "http://localhost:*"
+      - "http://127.0.0.1:*"
+  jwt:
+    secret: ${JWT_SECRET:dev-local-super-long-secret-please-change-0123456789-abcdef-XYZ}
+    access-exp-min: 180
+  ai:
+    mode: mock
+    ollama:
+      base-url: http://localhost:11434
+      model: llama3
+
+external:
+  clarifai:
+    api-key: ${CLARIFAI_API_KEY:}
+    model-id: food-item-recognition
+  usda:
+    api-key: ${USDA_API_KEY:}

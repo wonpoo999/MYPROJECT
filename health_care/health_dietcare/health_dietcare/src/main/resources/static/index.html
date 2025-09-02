@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HealthCare API</title>
+  <base target="_blank" />
+  <style>
+    :root{
+      --bg:#0f1220; --card:#151933; --muted:#8ea0b5; --fg:#e7ecf3;
+      --ok:#20d27d; --warn:#ffb020; --bad:#ff5d5d; --link:#70b7ff; --chip:#2a2f55;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:28px 16px; background:var(--bg); color:var(--fg);
+      font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",Arial,sans-serif;
+    }
+    .wrap{max-width:980px; margin:0 auto}
+    header{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+    header h1{margin:0; font-size:22px}
+    header .chip{background:var(--chip); padding:6px 10px; border-radius:999px; color:var(--muted)}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.05), transparent 60%), var(--card);
+      border:1px solid rgba(255,255,255,.07); border-radius:16px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.25);
+      margin:16px 0;
+    }
+    h2{margin:0 0 10px 0; font-size:16px}
+    p{margin:6px 0; color:var(--muted)}
+    a{color:var(--link); text-decoration:none} a:hover{text-decoration:underline}
+    .grid{display:grid; gap:12px}
+    @media(min-width:840px){ .grid{grid-template-columns:1.2fr 1fr} }
+    .list{display:grid; gap:8px}
+    .row{display:flex; gap:10px; align-items:center; justify-content:space-between;
+         padding:10px 12px; border:1px solid rgba(255,255,255,.07); border-radius:12px; background:rgba(255,255,255,.02)}
+    .left{display:flex; align-items:center; gap:10px; min-width:0}
+    .method{font-weight:700; font-size:12px; padding:3px 8px; border-radius:8px; color:#0e1220; background:#c5d5ff; flex:0 0 auto}
+    .GET{background:#c5f8df}.POST{background:#ffd6a8}.PATCH{background:#ffe484}
+    .guard{font-size:12px; color:#a3b4c6; background:rgba(255,255,255,.06); padding:3px 6px; border-radius:8px}
+    code{background:rgba(255,255,255,.08); padding:.15rem .35rem; border-radius:6px}
+    .status{display:flex; gap:10px; align-items:center}
+    .dot{width:10px; height:10px; border-radius:50%}
+    .dot.ok{background:var(--ok)} .dot.bad{background:var(--bad)} .dot.warn{background:var(--warn)}
+    .small{font-size:12px; color:var(--muted)}
+    details{border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 12px; background:rgba(255,255,255,.02)}
+    details summary{cursor:pointer; color:var(--muted)}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+    .kbd{border:1px solid rgba(255,255,255,.2); padding:2px 6px; border-radius:6px; background:rgba(255,255,255,.06)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>HealthCare <span style="opacity:.7">API</span></h1>
+      <span class="chip">서버 동작 중</span>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>상태</h2>
+        <p class="small">서버 헬스/환경을 즉시 확인합니다.</p>
+        <div id="health" class="status" style="margin-top:8px">
+          <span class="dot warn"></span><span id="healthText">확인 중…</span>
+        </div>
+        <p class="small" id="originRow" style="margin-top:10px"></p>
+        <p class="small">헬스 엔드포인트: <a href="/actuator/health">/actuator/health</a></p>
+      </section>
+
+      <section class="card">
+        <h2>퀵 가이드</h2>
+        <div class="small">
+          <p>• 프론트 기본: <code>http://localhost:5173</code> (또는 Vite가 할당한 포트)</p>
+          <p>• API 기본: <code>http://localhost:8081</code></p>
+          <p>• JWT 저장 위치: <code>localStorage.token</code></p>
+          <p>• 401이면 <span class="kbd">Authorization: Bearer …</span> 헤더가 필요합니다.</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>엔드포인트</h2>
+      <div class="list">
+        <div class="row">
+          <div class="left"><span class="method GET">GET</span><a href="/actuator/health">/actuator/health</a></div>
+          <span class="guard">public</span>
+        </div>
+
+        <div class="row">
+          <div class="left"><span class="method GET">GET</span>
+            <a href="/api/auth/exists?username=test">/api/auth/exists?username=<span class="mono">test</span></a>
+          </div>
+          <span class="guard">public</span>
+        </div>
+
+        <div class="row"><div class="left"><span class="method POST">POST</span><span>/api/auth/register</span></div><span class="guard">public</span></div>
+        <div class="row"><div class="left"><span class="method POST">POST</span><span>/api/auth/login</span></div><span class="guard">public</span></div>
+        <div class="row"><div class="left"><span class="method GET">GET</span><span>/api/users/me</span></div><span class="guard">Bearer</span></div>
+        <div class="row"><div class="left"><span class="method PATCH">PATCH</span><span>/api/users/privacy</span></div><span class="guard">Bearer</span></div>
+
+        <div class="row">
+          <div class="left"><span class="method GET">GET</span><a href="/swagger-ui.html">/swagger-ui.html</a></div>
+          <span class="guard">public</span>
+        </div>
+      </div>
+
+      <details style="margin-top:12px">
+        <summary>예시 cURL</summary>
+        <pre class="mono" style="white-space:pre-wrap;margin-top:8px">
+# 가입
+curl -X POST http://localhost:8081/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","password":"P@ssw0rd!","email":"alice@example.com","name":"앨리스","gender":"FEMALE","heightCm":165,"weightKg":55.0,"publicProfile":true}'
+
+# 로그인 (토큰 획득)
+curl -X POST http://localhost:8081/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","password":"P@ssw0rd!"}'
+
+# 내 정보(토큰 필요)
+curl http://localhost:8081/api/users/me -H "Authorization: Bearer <토큰>"
+        </pre>
+      </details>
+    </section>
+
+    <footer class="small" style="opacity:.8; margin-top:12px">
+      © HealthCare API • 이 페이지는 <code>src/main/resources/static/index.html</code> 에서 제공됩니다.
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("originRow").textContent =
+      "현재 페이지: " + location.origin + " • 로컬 시간: " + new Date().toLocaleString();
+
+    (async () => {
+      const dot = document.querySelector(".dot");
+      const text = document.getElementById("healthText");
+      try {
+        const res = await fetch("/actuator/health", {headers:{Accept:"application/json"}});
+        const data = await res.json();
+        const ok = res.ok && data && (data.status === "UP" || data.status === "up");
+        dot.classList.remove("warn"); dot.classList.add(ok ? "ok":"bad");
+        text.textContent = ok ? "UP" : ("DOWN (" + (data?.status || res.status) + ")");
+      } catch (e) {
+        dot.classList.remove("warn"); dot.classList.add("bad");
+        text.textContent = "확인 실패: " + e.message;
+      }
+    })();
+  </script>
+</body>
+</html>

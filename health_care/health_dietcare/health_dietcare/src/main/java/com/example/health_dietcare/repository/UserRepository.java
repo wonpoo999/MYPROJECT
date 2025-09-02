@@ -1,0 +1,23 @@
+package com.example.health_dietcare.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.example.health_dietcare.entity.User;
+
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    Optional<User> findByUsername(String username);
+
+    // 대소문자 무시 존재 확인
+    @Query("select (count(u) > 0) from User u where lower(u.username) = lower(:username)")
+    boolean existsUsernameIgnoreCase(@Param("username") String username);
+
+    @Query("select (count(u) > 0) from User u where lower(u.email) = lower(:email)")
+    boolean existsEmailIgnoreCase(@Param("email") String email);
+}

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "health_care/health_dietcare/health_dietcare"
+		},
+		{
+			"path": "health_care/client"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}
