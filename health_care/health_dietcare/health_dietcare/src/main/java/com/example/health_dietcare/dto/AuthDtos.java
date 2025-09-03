@@ -29,6 +29,10 @@ public class AuthDtos {
         private Gender gender;
         private Integer heightCm;
         private Double  weightKg;
+
+        /** ✅ 추가 */
+        private Integer age;
+
         private Boolean publicProfile;
 
         private String bornTown;

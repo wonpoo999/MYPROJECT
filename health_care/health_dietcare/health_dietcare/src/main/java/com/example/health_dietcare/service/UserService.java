@@ -1,3 +1,4 @@
+// src/main/java/com/example/health_dietcare/service/UserService.java
 package com.example.health_dietcare.service;
 
 import com.example.health_dietcare.dto.UserDtos;
@@ -31,6 +32,7 @@ public class UserService {
                 .gender(u.getGender())
                 .heightCm(u.getHeightCm())
                 .weightKg(u.getWeightKg())
+                .age(u.getAge())                 // ✅ 추가
                 .publicProfile(u.isPublicProfile())
                 .tier(u.getTier())
                 .role(u.getRole())

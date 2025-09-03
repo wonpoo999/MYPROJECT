@@ -11,12 +11,16 @@ public class UserDtos {
         private String username;
         private String email;
         private String name;
-        private User.Gender gender;     // ← 엔티티의 중첩 enum 사용
+        private User.Gender gender;
         private Integer heightCm;
         private Double weightKg;
+
+        /** ✅ 추가 */
+        private Integer age;
+
         private Boolean publicProfile;
-        private User.Tier tier;         // ← 엔티티의 중첩 enum 사용
-        private User.Role role;         // ← 프론트 인사말에서 필요
+        private User.Tier tier;
+        private User.Role role;
     }
 
     @Data

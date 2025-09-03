@@ -46,6 +46,9 @@ public class User {
     private Integer heightCm;
     private Double  weightKg;
 
+    /** ✅ 추가 */
+    private Integer age;
+
     @Column(nullable = false)
     @Builder.Default
     private boolean publicProfile = true;

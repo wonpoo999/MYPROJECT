@@ -128,3 +128,23 @@ option{ color:inherit; background:inherit; }
   .btn { border: 1px solid ButtonText; background: ButtonFace; color: ButtonText; }
   .input, .select { border-color: GrayText; background: Canvas; color: CanvasText; }
 }
+
+/* ===== 로고 알약 이미지 보강 ===== */
+.logo-pill{
+  width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--line);
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+}
+.logo-pill img{ display:block; width:24px; height:24px; border-radius:6px }
+
+/* ===== 하단 3개의 동그라미 버튼 ===== */
+.fab-row{ display:flex; gap:18px; justify-content:center; margin-top:28px }
+.fab{
+  width:64px; height:64px; border-radius:999px; display:grid; place-items:center;
+  text-decoration:none; font-size:28px; background:var(--chip); color:var(--fg);
+  border:1px solid var(--line); box-shadow: var(--shadow);
+  transition: transform .08s ease, filter .2s ease;
+}
+.fab:hover{ filter:saturate(1.1) brightness(1.05) }
+.fab:active{ transform: translateY(1px) }

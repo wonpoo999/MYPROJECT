@@ -1,3 +1,4 @@
+// src/pages/Profile.jsx
 import {useEffect,useState} from "react";
 import {clearToken, request} from "../lib/api.js";
 
@@ -8,8 +9,10 @@ export default function Profile(){
   useEffect(()=>{ load(); },[]);
 
   async function togglePrivacy(){
-    try{ await request("/api/users/privacy",{method:"PATCH",body:{publicProfile:!me.publicProfile}});
-         setMe({...me, publicProfile:!me.publicProfile}); }catch(e){ alert("변경 실패: "+e.message); }
+    try{
+      await request("/api/users/privacy",{method:"PATCH",body:{publicProfile:!me.publicProfile}});
+      setMe({...me, publicProfile:!me.publicProfile});
+    }catch(e){ alert("변경 실패: "+e.message); }
   }
   function logout(){ clearToken(); location.href="/login"; }
 
@@ -24,6 +27,7 @@ export default function Profile(){
         <tr><td>email</td><td>{me.email}</td></tr>
         <tr><td>name</td><td>{me.name}</td></tr>
         <tr><td>gender</td><td>{me.gender}</td></tr>
+        <tr><td>age</td><td>{me.age ?? '-'}</td></tr>
         <tr><td>height</td><td>{me.heightCm} cm</td></tr>
         <tr><td>weight</td><td>{me.weightKg} kg</td></tr>
         <tr><td>public</td><td>{String(me.publicProfile)}</td></tr>

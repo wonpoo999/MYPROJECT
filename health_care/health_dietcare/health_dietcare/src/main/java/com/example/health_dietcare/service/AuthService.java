@@ -1,3 +1,4 @@
+// src/main/java/com/example/health_dietcare/service/AuthService.java
 package com.example.health_dietcare.service;
 
 import com.example.health_dietcare.dto.AuthDtos;
@@ -53,6 +54,22 @@ public class AuthService {
         if (users.existsEmailIgnoreCase(r.getEmail()) || users.existsByEmail(r.getEmail()))
             throw new IllegalStateException("email already exists");
 
+        // ✅ 범위 검증
+        if (r.getHeightCm() != null) {
+            int h = r.getHeightCm();
+            if (h < 100 || h > 400) throw new IllegalArgumentException("존재하지 않는 신장");
+        }
+        if (r.getWeightKg() != null) {
+            double w = r.getWeightKg();
+            if (w < 15 || w > 500) throw new IllegalArgumentException("존재하지 않는 체중");
+        }
+        if (r.getAge() == null) {
+            throw new IllegalArgumentException("나이를 입력하세요.");
+        } else {
+            int a = r.getAge();
+            if (a < 10 || a > 120) throw new IllegalArgumentException("유효하지 않은 나이");
+        }
+
         User u = buildUser(r);
         users.save(u);
     }
@@ -86,6 +103,9 @@ public class AuthService {
             callIfExists(b, "weightKg", Double.class,  r.getWeightKg());
             callIfExists(b, "publicProfile", Boolean.class, r.getPublicProfile());
 
+            // ✅ 추가 매핑: 나이
+            callIfExists(b, "age", Integer.class, r.getAge());
+
             callIfExists(b, "bornTown",   String.class, r.getBornTown());
             callIfExists(b, "livedTown",  String.class, r.getLivedTown());
             callIfExists(b, "motherName", String.class, r.getMotherName());
@@ -107,6 +127,9 @@ public class AuthService {
                 callIfExists(u, "setHeightCm", Integer.class, r.getHeightCm());
                 callIfExists(u, "setWeightKg", Double.class,  r.getWeightKg());
                 callIfExists(u, "setPublicProfile", Boolean.class, r.getPublicProfile());
+
+                // ✅ 추가 매핑: 나이
+                callIfExists(u, "setAge", Integer.class, r.getAge());
 
                 callIfExists(u, "setBornTown",   String.class, r.getBornTown());
                 callIfExists(u, "setLivedTown",  String.class, r.getLivedTown());

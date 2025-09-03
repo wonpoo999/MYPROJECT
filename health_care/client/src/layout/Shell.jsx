@@ -18,9 +18,7 @@ export default function Shell() {
     };
     load();
 
-    const onStorage = (e) => {
-      if (e.key === "token") load();
-    };
+    const onStorage = (e) => { if (e.key === "token") load(); };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
@@ -44,8 +42,10 @@ export default function Shell() {
         {/* Sidebar */}
         <aside className={`side ${open ? "open" : "close"}`}>
           <div className="side-head">
-            {/* ✅ 아이콘 클릭 시 메인으로 */}
-            <NavLink to="/" className="logo-pill" aria-label="메인으로">fit</NavLink>
+            {/* ✅ 아이콘 클릭 시 메인으로 (fit → 로고 이미지) */}
+            <NavLink to="/" className="logo-pill" aria-label="메인으로">
+              <img src="/logo.png" alt="DietCare" width="24" height="24" />
+            </NavLink>
             {open && <div className="brand">DietCare</div>}
             <button className="side-toggle" onClick={() => setOpen(v => !v)} aria-label="toggle menu">
               ☰
@@ -55,6 +55,9 @@ export default function Shell() {
           <nav className="side-nav">
             <NavLink to="/" end className="side-link"><span>대시보드</span></NavLink>
             <NavLink to="/register" className="side-link"><span>회원가입</span></NavLink>
+            <NavLink to="/profile" className="side-link"><span>프로필</span></NavLink>
+            <NavLink to="/upload" className="side-link"><span>카메라</span></NavLink>
+            <NavLink to="/settings" className="side-link"><span>설정</span></NavLink>
           </nav>
 
           <div className="side-foot">

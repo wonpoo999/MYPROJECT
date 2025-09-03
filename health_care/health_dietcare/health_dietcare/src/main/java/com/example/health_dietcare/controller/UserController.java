@@ -17,7 +17,7 @@ import java.util.*;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService users;
-    private final UserRepository repo; // ✅ 추가
+    private final UserRepository repo;
 
     @GetMapping("/me")
     public UserDtos.ProfileRes me(Authentication auth){
@@ -29,7 +29,7 @@ public class UserController {
         users.setPrivacy(auth, r);
     }
 
-    // ✅ 관리자 전용: 모든 유저 전체 보기(비공개/보안질문 포함)
+    // 관리자 전용: 모든 유저 전체 보기(비공개/보안질문 포함)
     @GetMapping("/all")
     public List<Map<String,Object>> all() {
         List<User> list = repo.findAll();
@@ -44,6 +44,7 @@ public class UserController {
             m.put("gender", u.getGender());
             m.put("heightCm", u.getHeightCm());
             m.put("weightKg", u.getWeightKg());
+            m.put("age", u.getAge());                 // ✅ 추가
             m.put("publicProfile", u.isPublicProfile());
             m.put("tier", u.getTier());
             // 보안질문
